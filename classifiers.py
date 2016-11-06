@@ -1,4 +1,4 @@
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.preprocessing import LabelEncoder
 from sklearn.cross_validation import StratifiedShuffleSplit
@@ -7,6 +7,7 @@ import pandas as pd
 
 classifiers = [
     RandomForestClassifier(n_estimators=100),
+    ExtraTreesClassifier(n_estimators=100),
     DecisionTreeClassifier(),
 ]
 
