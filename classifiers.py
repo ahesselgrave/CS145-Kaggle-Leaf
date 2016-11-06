@@ -19,6 +19,7 @@ labels = le.transform(train.species)
 classes = list(le.classes_)
 test_ids = test.id
 
+
 train = train.drop(['id', 'species'], axis=1)
 test = test.drop(['id'], axis=1)
 
@@ -49,9 +50,9 @@ for clsfr in classifiers:
 # ExtraTreesClassifier was the best
 trees = ExtraTreesClassifier(n_estimators=100)
 trees.fit(X_train, y_train)
-trees_predict = trees.predict_proba(X_test)
+trees_predict = trees.predict_proba(test)
 
 submission = pd.DataFrame(trees_predict, columns=classes)
 submission.insert(0,'id',test_ids)
-submission.reset_index()
 submission.to_csv('submission.csv', index=False)
+
