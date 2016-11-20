@@ -40,8 +40,8 @@ classifiers = [
                RandomForestClassifier(n_estimators=100),
                DecisionTreeClassifier(),
                LinearDiscriminantAnalysis(),
-               VotingClassifier(estimators=[('kn',clf1),('nus',clf2),('lda',clf3)], voting='soft',weights=[1,1,2]),
-               VotingClassifier(estimators=[('kn',clf1),('lda',clf3),('rfc',clf4)], voting='soft',weights=[1,3,1])
+               #VotingClassifier(estimators=[('kn',clf1),('nus',clf2),('lda',clf3)], voting='soft',weights=[1,1,2]),
+               VotingClassifier(estimators=[('kn',clf1),('lda',clf3),('rfc',clf4)], voting='soft',weights=[2,3,1])
                ]
 
 for clsfr in classifiers:
@@ -59,3 +59,14 @@ for clsfr in classifiers:
     print "Log loss: {:10.4f}".format(loss)
     
     print '-'*50
+
+# ExtraTreesClassifier was the best
+votings = VotingClassifier(estimators=[('kn',clf1),('lda',clf3),('rfc',clf4)], voting='soft',weights=[1,3,1])
+votings.fit(X_train,y_train)
+votings_predict = votings.predict_proba(test)
+#trees.fit(X_train, y_train)
+#trees_predict = trees.predict_proba(test)
+
+submission = pd.DataFrame(votings_predict, columns=classes)
+submission.insert(0,'id',test_ids)
+submission.to_csv('submission.csv', index=False)
