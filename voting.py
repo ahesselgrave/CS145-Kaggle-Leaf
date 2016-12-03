@@ -1,5 +1,6 @@
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import VotingClassifier
+from sklearn.ensemble import AdaBoostClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.svm import NuSVC
@@ -32,16 +33,16 @@ for train_index, test_index in sss:
 
 # for voting
 clf1 = KNeighborsClassifier(3)
-clf2 = NuSVC(probability=True)
 clf3 = LinearDiscriminantAnalysis()
 clf4 = RandomForestClassifier(n_estimators=100)
 
 classifiers = [
-               RandomForestClassifier(n_estimators=100),
-               DecisionTreeClassifier(),
-               LinearDiscriminantAnalysis(),
-               VotingClassifier(estimators=[('kn',clf1),('nus',clf2),('lda',clf3)], voting='soft',weights=[1,1,2]),
-               VotingClassifier(estimators=[('kn',clf1),('lda',clf3),('rfc',clf4)], voting='soft',weights=[1,3,1])
+               # RandomForestClassifier(n_estimators=100),
+               # DecisionTreeClassifier(),
+               # LinearDiscriminantAnalysis(),
+               # VotingClassifier(estimators=[('kn',clf1),('nus',clf2),('lda',clf3)], voting='soft',weights=[1,1,2]),
+               VotingClassifier(estimators=[('kn',clf1),('lda',clf3),('rfc',clf4)], voting='soft',weights=[1,3,1]),
+               # AdaBoostClassifier(n_estimators=100)
                ]
 
 for clsfr in classifiers:
@@ -59,3 +60,14 @@ for clsfr in classifiers:
     print "Log loss: {:10.4f}".format(loss)
     
     print '-'*50
+
+# ExtraTreesClassifier was the best
+votings = VotingClassifier(estimators=[('kn',clf1),('lda',clf3),('rfc',clf4)], voting='soft',weights=[1,3,1])
+votings.fit(X_train,y_train)
+votings_predict = votings.predict_proba(test)
+#trees.fit(X_train, y_train)
+#trees_predict = trees.predict_proba(test)
+
+submission = pd.DataFrame(votings_predict, columns=classes)
+submission.insert(0,'id',test_ids)
+submission.to_csv('submission.csv', index=False)
