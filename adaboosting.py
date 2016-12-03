@@ -4,14 +4,15 @@ from sklearn.cross_validation import StratifiedShuffleSplit
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn import tree
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import log_loss
 from IPython.display import Image  #in order to show the tree
 import pydotplus
 
 n_estimators = 100  #parameters for adaboosting
 
 #data processing
-train = pd.read_csv('d:\\class_for_ucla\\2016 winter\\cs145\\project\\train.csv')
-test = pd.read_csv('d:\\class_for_ucla\\2016 winter\\cs145\\project\\test.csv')
+train = pd.read_csv('train.csv')
+test = pd.read_csv('test.csv')
 le = LabelEncoder().fit(train.species)
 labels = le.transform(train.species)
 train = train.drop(['id', 'species'], axis=1)   #only features remain
@@ -36,18 +37,11 @@ dot_data = tree.export_graphviz(
     filled = True, rounded = True,
     special_characters = True
 )
-graph = pydotplus.graph_from_dot_data(dot_data)
-graph.write_pdf("iris.pdf")
-#install graphviz to see the tree model link:http://www.graphviz.org/Download..php
-Image(graph.create_png())
 
-ada_discrete = AdaBoostClassifier(
-    base_estimator =dt_stump,
-    learning_rate = 1,
-    n_estimators = n_estimators,
-    algorithm = "SAMME"
-)
-ada_discrete.fit(X_train,y_train)
+#graph = pydotplus.graph_from_dot_data(dot_data)
+#graph.write_pdf("iris.pdf")
+#install graphviz to see the tree model link:http://www.graphviz.org/Download..php
+#Image(graph.create_png())
 
 ada_real = AdaBoostClassifier(
     base_estimator = dt_stump,
@@ -57,10 +51,10 @@ ada_real = AdaBoostClassifier(
 )
 ada_real.fit(X_train,y_train)
 
-score_discrete = ada_discrete.score(X_test,y_test)
 score_real = ada_real.score(X_test,y_test)
+train_prob = ada_real.predict_proba(X_test)
+loss = log_loss(y_test, train_prob)
 
-print "Accuracy of discrete: {:.2%}".format(score_discrete);
-print "Accuracy of discrete: {:.2%}".format(score_real);
+print "Accuracy of AdaBoost: {:.2%}".format(score_real)
+print "Log loss: {:10.4f}".format(loss)
 
-print 'this is the end of line'

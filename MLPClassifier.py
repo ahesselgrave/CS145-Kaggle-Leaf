@@ -3,10 +3,11 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from sklearn.cross_validation import StratifiedShuffleSplit
 from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import log_loss
 
 #data processing
-train = pd.read_csv('d:\\class_for_ucla\\2016 winter\\cs145\\project\\train.csv')
-test = pd.read_csv('d:\\class_for_ucla\\2016 winter\\cs145\\project\\test.csv')
+train = pd.read_csv('train.csv')
+test = pd.read_csv('test.csv')
 le = LabelEncoder().fit(train.species)
 labels = le.transform(train.species)
 train = train.drop(['id', 'species'], axis=1)   #only features remain
@@ -34,4 +35,6 @@ MyMlpClassifier.fit( X_train,y_train)
 Test_result=MyMlpClassifier.predict(X_test)
 Test_probability=MyMlpClassifier.predict_proba(X_test)
 Score=MyMlpClassifier.score(X_test,y_test)
+Loss=log_loss(y_test, Test_probability)  
 print "Score of MLP: {:.2%}".format(Score);
+print "Log loss: {:10.4f}".format(Loss)
