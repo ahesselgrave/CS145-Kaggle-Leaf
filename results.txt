@@ -1,0 +1,13 @@
+RandomForestClassifier
+Accuracy: 97.47%
+Log loss:     0.7581
+--------------------------------------------------
+ExtraTreesClassifier
+Accuracy: 97.98%
+Log loss:     0.6768
+--------------------------------------------------
+DecisionTreeClassifier
+Accuracy: 64.65%
+Log loss:    12.2107
+--------------------------------------------------
+
